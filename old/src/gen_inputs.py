@@ -4,6 +4,7 @@ from collections.abc import Iterable
 from typing import Callable
 from statistics import mean
 import pandas as pd
+import math
 
 START: int = 999
 STEP: int = -1
@@ -23,6 +24,7 @@ def row_density(number: float) -> int:
     'return the number of entries a row should have'
 #    return 10
     return round(number)
+#    return math.floor(number) + 1
 
 def count(iterable: Iterable, key: Callable[[float], int] = lambda item: item is not None) -> int:
     return sum(key(item) for item in iterable)
@@ -35,6 +37,7 @@ for number in range(START, STOP, STEP):
     column_index = (column_index + 1) % COLUMN_COUNT
     
     actual_row_entry_count = count(table[row_index])
+    #expected_row_entry_count = round(mean(row_density(number) for number in table[row_index] if number is not None))
     expected_row_entry_count = round(mean(row_density(number) for number in table[row_index] if number is not None))
     
     print(row_index, column_index, actual_row_entry_count, expected_row_entry_count, table[row_index])
@@ -45,7 +48,7 @@ for number in range(START, STOP, STEP):
 
 # magic. delete an unexplainable empty row
 del table[-1]
-'''
+
 # the first rows which have only one entry technically want their rows filled completely. lets do that.
 for index, row in enumerate(table):
     # early exit
@@ -59,7 +62,7 @@ for index, row in enumerate(table):
 
 for row in table[::-1]:
     print(row[::-1])
-'''
+
 lines: list[str] = [','.join('' if entry is None else f'{entry:.3f}' for entry in row[::-1]) + '\n' for row in table]
 
 with open(FILENAME, 'w') as file:
